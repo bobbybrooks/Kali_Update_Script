@@ -2,7 +2,7 @@
 
 ################################################################################
 #
-#  FILE: Kali_Update_Script.txt
+#  FILE: Kali_Update_Script_current.sh
 #
 #  AUTHOR: Bobby Brooks
 #
