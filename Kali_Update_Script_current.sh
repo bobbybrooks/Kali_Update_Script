@@ -2,7 +2,7 @@
 
 ################################################################################
 #
-#  FILE: Kali_Update_Script.sh
+#  FILE: Kali_Update_Script.txt
 #
 #  AUTHOR: Bobby Brooks
 #
@@ -19,16 +19,17 @@
 #  PURPOSE: 
 #
 #
-#  STATUS: Peer Review (30 July 2014)
+#  STATUS: Peer Review (1 December 2014)
 #
 #  NOTES: 
+#	Thinking about starting the metasploit service and postgresql automatically at startup
 #		
 #
 #
 #  USE: Install Kali Linux from DVD (ISO).  After initial login, identify 
 #  software to load (comment out unwanted software) and username run script 
 #  and identify username and password to be created.
-#	-Run script: sh ./Kali-Update_1_0.sh and enter desired user/pass
+#	-Run script: sh ./kali_update_script.txt and enter desired user/pass
 #	-Once Complete, validate installs with errorcheck.sh on user's Desktop
 #
 #
@@ -47,7 +48,13 @@
 #		Included code to make script executable
 #		Added pause function at end
 #	30 July 2014 - Submitted for peer review
-#		
+#	11 August 2014 - Updated java to 1.8.0_11
+#	26 August 2014 - Updated java to 1.8.0_20
+#	23 October 2014 - Updated java to 1.8.0_25		
+#	1 December 2014 - Added script to check for 32bit or 64bit and update 
+#		java info dynamically
+# 8 February 2015 - Automatically pulls newest version of java with apt-get jdk
+#
 #
 ################################################################################
 
@@ -55,7 +62,7 @@
 ### Creating user first to set variables
 ### 9. Add a standard user
 # Kali Linux got only root user by default. While most applications require 
-# root access, it’s always a good idea to add a second user. 
+# root access, itâ€™s always a good idea to add a second user. 
 
 # User input for username and password
 echo -n "Enter your desired username: "
@@ -75,7 +82,8 @@ chsh -s /bin/bash $username
 cp /root/.bashrc /home/$username/.bashrc
 mkdir /home/$username/Desktop && chown $username /home/$username/Desktop && chgrp $username /home/$username/Desktop
 
-
+# This sets the bits variable to either 686 or amd64 (32 bit or 64 bit) for updating java (and maybe more)
+bits=`uname -a | cut -f 3 -d " " | cut -f 3 -d "-"`
 ################################################################################
 
 
@@ -109,7 +117,7 @@ chmod a=r+w+x /home/$username/Desktop/errorcheck.sh
 
 ################################################################################
 ######### I don't do this because it caused issues with my connection ##########
-### 1. Fix Device not managed error – wired network
+### 1. Fix Device not managed error â€“ wired network
 
 # Backup file
 cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.old
@@ -160,6 +168,7 @@ cp /etc/default/pulseaudio /etc/default/pulseaudio.old
 sed -i -e 's/PULSEAUDIO_SYSTEM_START=0/PULSEAUDIO_SYSTEM_START=1/g' /etc/default/pulseaudio
 ################################################################################
 
+
 ################################################################################
 ### 5. Enable sound on Boot
 # Follow the steps below to fix sound mute in Kali Linux on boot
@@ -167,26 +176,97 @@ apt-get install alsa-utils -y
 ################################################################################
 
 ################################################################################
-########### Filename must be changed...current is 1.7.0_65 and 7u65 ############
-## Must update the download link to the current version  This version is 7u65 ##
+########### Filename must be changed...current is 1.8.0_11 and 8u11 ############
+## Must update the download link to the current version  This version is 8u11 ##
 
 ### 6. Install Java
+# can just use apt-get to bypass all the cool code below:
+# apt-get install default-jdk
 
-cd ~
+# Renamed java download page to local page
+wget -v http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html && mv ./jdk8-downloads-2133151.html ./java-download.html
+major_version_x86=`cat java-download.html | grep i586.tar.gz | cut -d "'" -f 7 | cut -d '"' -f 12 | cut -d "/" -f 7 | cut -d "-" -f 1 | cut -d "u" -f 1`
+minor_version_x86=`cat java-download.html | grep i586.tar.gz | cut -d "'" -f 7 | cut -d '"' -f 12 | cut -d "/" -f 7 | cut -d "-" -f 1 | cut -d "u" -f 2` 
+revision_x86=`cat java-download.html | grep i586.tar.gz | cut -d "'" -f 7 | cut -d '"' -f 12 | cut -d "/" -f 7 | cut -d "-" -f 2`
 
-curl -L -C - -b "oraclelicense=accept-securebackup-cookie" -O http://download.oracle.com/otn-pub/java/jdk/7u65-b17/jdk-7u65-linux-x64.tar.gz
+major_version_x64=`cat java-download.html | grep linux.x64.tar.gz | cut -d "'" -f 7 | cut -d '"' -f 12 | cut -d "/" -f 7 | cut -d "-" -f 1 | cut -d "u" -f 1`
+minor_version_x64=`cat java-download.html | grep linux.x64.tar.gz | cut -d "'" -f 7 | cut -d '"' -f 12 | cut -d "/" -f 7 | cut -d "-" -f 1 | cut -d "u" -f 2` 
+revision_x64=`cat java-download.html | grep linux.x64.tar.gz | cut -d "'" -f 7 | cut -d '"' -f 12 | cut -d "/" -f 7 | cut -d "-" -f 2`
 
-tar -xzvf /root/jdk-7u65-linux-x64.tar.gz
-mv jdk1.7.0_65 /opt
-cd /opt/jdk1.7.0_65
 
+
+# Check for 32 bit or 64 bit version
+
+# This is the 64 bit version
+if [ $bits == 'amd64' ]; 
+	then
+		cd ~
+		curl -L -C - -b "oraclelicense=accept-securebackup-cookie" -O http://download.oracle.com/otn-pub/java/jdk/$major_version_x64"u"$minor_version_x64-$revision_x64/jdk-$major_version_x64"u"$minor_version_x64-linux-x64.tar.gz
+
+		tar -xzvf /root/jdk-$major_version_x64"u"$minor_version_x64-linux-x64.tar.gz
+		mv jdk1.$major_version_x64.0_$minor_version_x64 /opt
+		cd /opt/jdk1.$major_version_x64.0_$minor_version_x64
+
+		update-alternatives --install /usr/bin/java java /opt/jdk1.$major_version_x64.0_$minor_version_x64/bin/java 1
+		update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_$minor_version_x64/bin/javac 1
+		update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.$major_version_x64.0_$minor_version_x64/jre/lib/amd64/libnpjp2.so 1
+		update-alternatives --set java /opt/jdk1.$major_version_x64.0_$minor_version_x64/bin/java
+		update-alternatives --set javac /opt/jdk1.$major_version_x64.0_$minor_version_x64/bin/javac
+		update-alternatives --set mozilla-javaplugin.so /opt/jdk1.$major_version_x64.0_$minor_version_x64/jre/lib/amd64/libnpjp2.so
+fi
+
+#
+# Hard coded link
+#		curl -L -C - -b "oraclelicense=accept-securebackup-cookie" -O http://download.oracle.com/otn-pub/java/jdk/8u25-b17/jdk-8u25-linux-x64.tar.gz
+#
+#		tar -xzvf /root/jdk-8u25-linux-x64.tar.gz
+#		mv jdk1.8.0_25 /opt
+#		cd /opt/jdk1.8.0_25
 ################## Fileneames must be changed here as well ###################
-update-alternatives --install /usr/bin/java java /opt/jdk1.7.0_65/bin/java 1
-update-alternatives --install /usr/bin/javac javac /opt/jdk1.7.0_65/bin/javac 1
-update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.7.0_65/jre/lib/amd64/libnpjp2.so 1
-update-alternatives --set java /opt/jdk1.7.0_65/bin/java
-update-alternatives --set javac /opt/jdk1.7.0_65/bin/javac
-update-alternatives --set mozilla-javaplugin.so /opt/jdk1.7.0_65/jre/lib/amd64/libnpjp2.so
+#		update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_25/bin/java 1
+#		update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_25/bin/javac 1
+#		update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.8.0_25/jre/lib/amd64/libnpjp2.so 1
+#		update-alternatives --set java /opt/jdk1.8.0_25/bin/java
+#		update-alternatives --set javac /opt/jdk1.8.0_25/bin/javac
+#		update-alternatives --set mozilla-javaplugin.so /opt/jdk1.8.0_25/jre/lib/amd64/libnpjp2.so
+
+
+
+# This is the 32 bit version
+if [ $bits == '686' ]; 
+	then
+		cd ~
+		curl -L -C - -b "oraclelicense=accept-securebackup-cookie" -O http://download.oracle.com/otn-pub/java/jdk/$major_version_x86"u"$minor_version_x86-$revision_x86/jdk-$major_version_x86"u"$minor_version_x86-linux-i586.tar.gz
+
+		tar -xzvf /root/jdk-$major_version_x86"u"$minor_version_x86-linux-i586.tar.gz
+		mv jdk1.$major_version_x86.0_$minor_version_x86 /opt
+		cd /opt/jdk1.$major_version_x86.0_$minor_version_x86
+
+		update-alternatives --install /usr/bin/java java /opt/jdk1.$major_version_x86.0_$minor_version_x86/bin/java 1
+		update-alternatives --install /usr/bin/javac javac /opt/jdk1.$major_version_x86.0_$minor_version_x86/bin/javac 1
+		
+		update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.$major_version_x86.0_$minor_version_x86/jre/lib/i368/libnpjp2.so 1
+		update-alternatives --set java /opt/jdk1.$major_version_x86.0_$minor_version_x86/bin/java
+		update-alternatives --set javac /opt/jdk1.$major_version_x86.0_$minor_version_x86/bin/javac
+		update-alternatives --set mozilla-javaplugin.so /opt/jdk1.$major_version_x86.0_$minor_version_x86/jre/lib/i386/libnpjp2.so
+fi
+
+#
+# Hard coded link
+#		curl -L -C - -b "oraclelicense=accept-securebackup-cookie" -O http://download.oracle.com/otn-pub/java/jdk/8u25-b17/jdk-8u25-linux-i586.tar.gz
+#		tar -xzvf /root/jdk-8u25-linux-i586.tar.gz
+#		mv jdk1.8.0_25 /opt
+#		cd /opt/jdk1.8.0_25
+################## Fileneames must be changed here as well ###################
+#update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_25/bin/java 1
+#update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_25/bin/javac 1
+#update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.8.0_25/jre/lib/i368/libnpjp2.so 1
+#update-alternatives --set java /opt/jdk1.8.0_25/bin/java
+#update-alternatives --set javac /opt/jdk1.8.0_25/bin/javac
+#update-alternatives --set mozilla-javaplugin.so /opt/jdk1.8.0_25/jre/lib/i386/libnpjp2.so
+
+
+
 
 ################################################################################
 ### 7. Install Flash
@@ -305,14 +385,12 @@ apt-get install gdebi -y
 
 # Here I want to install some additional software
 # Chrome browser
-apt-get install chromium - y
+apt-get install chromium -y
 
 #Echo username and password to remember if desired
 echo $username $password
 # Pause if you want before rebooting
 read -p "Script complete.  Press [Enter] key to reboot"
-
-
 
 ############################# Finally reboot #############################
 reboot
@@ -352,6 +430,25 @@ reboot
 #  echo "Utility to add PPA repositories in your debian machine"
 #  echo "$0 ppa:user/ppa-name"
 #fi
+#
+#
+#
+#
+# JAVA UPDATE (PREVIOUS
+#curl -L -C - -b "oraclelicense=accept-securebackup-cookie" -O http://download.oracle.com/otn-pub/java/jdk/8u20-b26/jdk-8u20-linux-x64.tar.gz
+#
+#tar -xzvf /root/jdk-8u20-linux-x64.tar.gz
+#mv jdk1.8.0_20 /opt
+#cd /opt/jdk1.8.0_20
+#
+################### Fileneames must be changed here as well ###################
+#update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_20/bin/java 1
+#update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_20/bin/javac 1
+#update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.8.0_20/jre/lib/amd64/libnpjp2.so 1
+#update-alternatives --set java /opt/jdk1.8.0_20/bin/java
+#update-alternatives --set javac /opt/jdk1.8.0_20/bin/javac
+#update-alternatives --set mozilla-javaplugin.so /opt/jdk1.8.0_20/jre/lib/amd64/libnpjp2.so
+#
 #
 #ENDOFAPTREPO
 ########################################
