@@ -2,7 +2,7 @@
 
 ################################################################################
 #
-#  FILE: Kali_Update_Script_current.sh
+#  FILE: Kali_Update_Script.sh
 #
 #  AUTHOR: Bobby Brooks
 #
@@ -53,8 +53,6 @@
 #	23 October 2014 - Updated java to 1.8.0_25		
 #	1 December 2014 - Added script to check for 32bit or 64bit and update 
 #		java info dynamically
-# 8 February 2015 - Automatically pulls newest version of java with apt-get jdk
-#
 #
 ################################################################################
 
