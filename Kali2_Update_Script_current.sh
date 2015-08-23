@@ -165,7 +165,12 @@ reboot
 # runuser -u $username xset s off && xset s noblank && xset -dpms
 #
 #
-# Setting up xfce4-panel so my shortcuts cross over
+# Setting up xfce4-panel so my shortcuts cross over, files are in
+# ~/.config/xfce4/xfconf/xfce-perchannel-xml and ~/.config/xfce4/panel
+# Still figuring out the details on how these files work, but it looks like
+# I can set ~/.config/xfce4/xfconf/xfce-perchannel-xml to point to the specific
+# files I configure in the ~/.config/xfce4/panel directory, at least that's my
+# direction at 237 in the morning. :-)
 
 
 
