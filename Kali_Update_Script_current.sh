@@ -53,6 +53,12 @@
 #	23 October 2014 - Updated java to 1.8.0_25		
 #	1 December 2014 - Added script to check for 32bit or 64bit and update 
 #		java info dynamically
+#	22 August 2015 - Working on identifying changes necessary to Kali 2.0
+#		- There are significant differences between the full and light
+#		versions, specifically with regards to the tool set that's
+#		available for the platform.  I'm working on a way to pull all tools
+#		into the light version.
+#		- Full tool listing found here: http://tools.kali.org/tools-listing
 #
 ################################################################################
 
@@ -60,7 +66,7 @@
 ### Creating user first to set variables
 ### 9. Add a standard user
 # Kali Linux got only root user by default. While most applications require 
-# root access, itâ€™s always a good idea to add a second user. 
+# root access, it's always a good idea to add a second user. 
 
 # User input for username and password
 echo -n "Enter your desired username: "
@@ -81,6 +87,12 @@ cp /root/.bashrc /home/$username/.bashrc
 mkdir /home/$username/Desktop && chown $username /home/$username/Desktop && chgrp $username /home/$username/Desktop
 
 # This sets the bits variable to either 686 or amd64 (32 bit or 64 bit) for updating java (and maybe more)
+# uname -a
+# Kali amd64 1.1.0a
+# Linux hostname 3.18.0-kali3-amd64 #1 SMP Debian 3.18.6-1~kali2 (2015-03-02) x86_64 GNU/Linux
+# 
+# Kali amd64 2.0
+# Linux hostname 4.0.0-kali1-amd64 #1 SMP Debian 4.0.4-1+kali2 (2015-06-03) x86_64 GNU/Linux
 bits=`uname -a | cut -f 3 -d " " | cut -f 3 -d "-"`
 ################################################################################
 
