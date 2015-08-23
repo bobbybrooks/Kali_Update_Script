@@ -1,0 +1,35 @@
+[global_config]
+[keybindings]
+[profiles]
+  [[default]]
+    foreground_color = "#00ff00"
+    use_system_font = False
+    font = Monospace 12
+    visible_bell = True
+    urgent_bell = True
+    cursor_shape = ibeam
+    background_image = None
+    cursor_blink = False
+    copy_on_selection = True
+    audible_bell = True
+    scrollback_infinite = True
+  [[console]]
+    foreground_color = "#00ff00"
+    use_system_font = False
+    font = Monospace 16
+    visible_bell = True
+    urgent_bell = True
+    cursor_shape = ibeam
+    cursor_blink = False
+    copy_on_selection = True
+    audible_bell = True
+    scrollback_infinite = True
+[layouts]
+  [[default]]
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+    [[[window0]]]
+      type = Window
+      parent = ""
+[plugins]
