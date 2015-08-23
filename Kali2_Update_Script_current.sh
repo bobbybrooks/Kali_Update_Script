@@ -137,8 +137,8 @@ apt-get install nethogs -y
 # Terminator
 apt-get install terminator -y
 
-# GDebi Package Manager
-apt-get install gdebi -y
+# GDebi Package Manager (Kali already has a package manager)
+#apt-get install gdebi -y
 
 # Chrome browser
 apt-get install chromium -y
@@ -154,4 +154,23 @@ apt-get install kali-defaults kali-root-login desktop-base xfce4 xfce4-places-pl
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Finally, reboot
 reboot
+
+
+################################################################################
+# Stuff I'm still working on
+#
+# In order to prevent screen lock (not sure if it's run as the individual user)
+# xset s off && xset s noblank && xset -dpms
+# possibly
+# runuser -u $username xset s off && xset s noblank && xset -dpms
+#
+#
+# Setting up xfce4-panel so my shortcuts cross over
+
+
+
+
+
+
+
 
