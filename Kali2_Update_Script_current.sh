@@ -148,7 +148,7 @@ apt-get install xchat -y
 
 # xfce (since I hate the new interface and xfce is so much cleaner)
 # when logging in after reboot, click the wheel below the password and select xfce
-apt-get install kali-defaults kali-root-login desktop-base xfce4 xfce4-places-plugin xfce4-goodies
+apt-get install kali-defaults kali-root-login desktop-base xfce4 xfce4-places-plugin xfce4-goodies -y
 
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
