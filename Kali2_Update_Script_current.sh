@@ -22,10 +22,11 @@
 #		
 #
 #
-#  USE:		- Install Kali Linux from DVD (ISO)
+#  USE:
+#     - Install Kali Linux from DVD (ISO)
 #			- After initial login, wget this script
+#       wget http://bit.ly/kali2_update_script && chmod +x kali2_update_script
 #			- Identify changes needed and comment out unwanted portions
-#			- chmod +x ThisScript and enter new username/password
 #			- Once complete, validate all software is updated
 #
 #  REFS: 20 things to do after installing Kali Linux (blackMORE Ops)
