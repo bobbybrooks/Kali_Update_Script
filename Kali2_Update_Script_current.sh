@@ -34,6 +34,8 @@
 #
 #  HISTORY:
 #       22 August 2015 - 0.1
+#       2 September 2016 - 0.2
+#           - Updating window manager and specific configs for me
 #
 #  TESTING:
 #		- Full tool listing found here: http://tools.kali.org/tools-listing
@@ -149,6 +151,19 @@ apt-get install xchat -y
 # xfce (since I hate the new interface and xfce is so much cleaner)
 # when logging in after reboot, click the wheel below the password and select xfce
 apt-get install kali-defaults kali-root-login desktop-base xfce4 xfce4-places-plugin xfce4-goodies -y
+# to set as default
+echo xfce4-session > /root/.xsession
+# You still need to manually do it from the login screen
+
+# Let's add some color - these are ones I like
+cd /home/$username
+mkdir .vim
+git clone https://github.com/flazz/vim-colorschemes.git ./.vim
+
+cd /home/$username/.vim/colors/
+wget https://raw.githubusercontent.com/marciomazza/vim-brogrammer-theme/master/colors/brogrammer.vim
+wget https://raw.githubusercontent.com/pkukulak/idle/master/colors/idle.vim ~/.vim/colors/
+wget https://raw.githubusercontent.com/trevorrjohn/vim-obsidian/master/colors/obsidian.vim
 
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
